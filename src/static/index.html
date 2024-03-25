@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solana Trading Bot</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Solana Trading Bot</h1>
+    <div>
+        <label for="rpcUrl">Solana RPC URL:</label>
+        <input type="text" id="rpcUrl" value="https://api.mainnet-beta.solana.com">
+    </div>
+    <div>
+        <label for="phantomApiKey">Phantom Wallet API Key:</label>
+        <input type="text" id="phantomApiKey">
+    </div>
+    <div>
+        <label for="tokenPair">Token Pair:</label>
+        <input type="text" id="tokenPair" value="ETH/USDC">
+    </div>
+    <div>
+        <label for="historicalData">Historical Data API URL:</label>
+        <input type="text" id="historicalData">
+    </div>
+    <div>
+        <label for="currentPrice">Current Price API URL:</label>
+        <input type="text" id="currentPrice">
+    </div>
+    <div>
+        <label for="volatilityPeriod">Volatility Calculation Period (in days):</label>
+        <input type="number" id="volatilityPeriod" value="30">
+    </div>
+    <div>
+        <label for="entryThreshold">Entry Threshold (%):</label>
+        <input type="number" id="entryThreshold" value="20">
+    </div>
+    <div>
+        <label for="exitThreshold">Exit Threshold (%):</label>
+        <input type="number" id="exitThreshold" value="80">
+    </div>
+    <div>
+        <button id="startBot">Start Bot</button>
+        <button id="stopBot">Stop Bot</button>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        // Add your JavaScript code here
+        // Retrieve input values and interact with the Rust backend
+
+        document.getElementById('startBot').addEventListener('click', function() {
+            // Get input values
+            const rpcUrl = document.getElementById('rpcUrl').value;
+            const phantomApiKey = document.getElementById('phantomApiKey').value;
+            const tokenPair = document.getElementById('tokenPair').value;
+            const historicalDataUrl = document.getElementById('historicalData').value;
+            const currentPriceUrl = document.getElementById('currentPrice').value;
+            const volatilityPeriod = document.getElementById('volatilityPeriod').value;
+            const entryThreshold = document.getElementById('entryThreshold').value;
+            const exitThreshold = document.getElementById('exitThreshold').value;
+
+            // Send a POST request to the "/start" endpoint
+            fetch('/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    rpcUrl: rpcUrl,
+                    phantomApiKey: phantomApiKey,
+                    tokenPair: tokenPair,
+                    historicalDataUrl: historicalDataUrl,
+                    currentPriceUrl: currentPriceUrl,
+                    volatilityPeriod: volatilityPeriod,
+                    entryThreshold: entryThreshold,
+                    exitThreshold: exitThreshold
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('output').innerHTML += data + '<br>';
+            })
+            .catch(error => {
+                console.error('Error starting the bot:', error);
+            });
+        });
+
+        document.getElementById('stopBot').addEventListener('click', function() {
+            // Send a POST request to the "/stop" endpoint
+            fetch('/stop', {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('output').innerHTML += data + '<br>';
+            })
+            .catch(error => {
+                console.error('Error stopping the bot:', error);
+            });
+        });
+    </script>
+</body>
+</html>
